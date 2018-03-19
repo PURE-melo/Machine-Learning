@@ -1,0 +1,38 @@
+import numpy as np
+import matplotlib.pyplot as plt
+#Data preparation
+data1 = np.random.randint(0,5, size=(50, 2))
+label1= [([0]) for i in range(50)]
+plt.scatter(data1[:,0],data1[:,1])
+data2 = np.random.randint(-5,0, size=(50, 2))
+label2= [([1]) for i in range(50)]
+traindata1=np.append(data1,label1,1)
+traindata2=np.append(data2,label2,1)
+traindata=np.r_[traindata1,traindata2]
+X=np.c_[traindata[:,(0,1)],[([1]) for i in range(100)]]
+plt.scatter(data2[:,0],data2[:,1])
+#Mode building
+def hardlim(x):
+    num=np.size(x)
+    for j in range(num):
+        if (x[0, j]> 0):
+            x[0, j]= 1
+        else:
+            x[0, j]= 0
+    return x
+W=np.random.rand(1,3)
+z=np.dot(W, X.T)
+y_pred= hardlim(z)
+y=traindata[:, 2]
+print(np.abs(y_pred- y))
+while (np.sum(np.abs(y_pred- y))):
+    print(W)
+    for i in range(100):
+        if (y_pred[0, i] != y[i]):
+           W += (y[i] - y_pred[0, i])*X[i]
+           y_pred= hardlim(np.dot(W, X.T))
+print(W)
+x=np.arange(-10,10,0.1)
+y=-W[0,0]*x/W[0,1]-W[0,2]/W[0,1]
+plt.plot(x,y)
+plt.show()
