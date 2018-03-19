@@ -1,0 +1,43 @@
+from sklearn import datasets
+from sklearn import linear_model
+import numpy as np
+import matplotlib.pyplot as plt
+# def plot_decision_boundary(pred_func):
+#     x_min, x_max = x[:, 0].min() - .5, x[:, 0].max() + .5
+#     y_min, y_max = x[:, 1].min() - .5, x[:, 1].max() + .5
+#     h = 0.01
+#     xx, yy = np.meshgrid(np.arange(x_min, x_max, h), np.arange(y_min, y_max, h))
+#     Z = pred_func(np.c_[xx.ravel(), yy.ravel()])
+#     Z = Z.reshape(xx.shape)
+#     plt.contourf(xx, yy, Z, cmap=plt.cm.Spectral)
+#     plt.scatter(x[:, 0], x[:, 1], c=y, cmap=plt.cm.Spectral)
+# np.random.seed(0)
+# x, y = datasets.make_moons(200, noise=0.20)
+# plt.scatter(x[:,0], x[:,1],s=40,c=y)
+# clf = linear_model.LogisticRegressionCV()
+# clf.fit(x,y)
+# z=clf.predict(x)
+# for i in range(len(z)):
+#     if z[i]==1:
+#         plt.plot(x[i,0],x[i,1],"or")
+#     else:
+#         plt.plot(x[i,0],x[i,1],"og")
+# plt.show()
+# plot_decision_boundary(lambda x: clf.predict(x))
+N, In_node_num, Hide_node_num, Out_node_num = 64, 1000, 100, 10
+x, y = np.random.randn(N, In_node_num), np.random.randn(N,Out_node_num)
+w1, w2 =np.random.randn(In_node_num, Hide_node_num), np.random.randn(Hide_node_num, Out_node_num)
+for i in range(20000):
+    #Forward propagation
+    a2= 1 / (1 + np.exp(-x.dot(w1)))
+    y_pred=a2.dot(w2)
+    #Loss
+    loss=np.square(y_pred - y).sum()
+    print(i, loss)
+    #Backward propagation
+    grad_y = 2.0*(y_pred-y)
+    grad_w2 = a2.T.dot(grad_y)
+    grad_H = grad_y.dot(w2.T)
+    grad_w1 = x.T.dot(grad_H * a2 * (1 - a2))
+    w1 -= 0.0001 * grad_w1
+    w2 -= 0.0001 * grad_w2
