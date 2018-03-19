@@ -1,0 +1,27 @@
+import numpy as np
+import tensorflow as tf
+file_name=r"C:\Users\70528\PycharmProjects\test\Irisdata.txt"
+A=np.loadtxt(file_name)
+print(A)
+data=A[:,0:4]
+dataindex=A[:,4]
+########################
+traindata=np.reshape(np.append(data[0:30,:],[data[50:80,:],data[100:130,:]]),(-1,4))
+testdata=np.reshape(np.append(data[30:50,:],[data[80:100,:],data[130:150,:]]),(60,-1))
+trainlabel=np.append(dataindex[0:30],[dataindex[50:80],dataindex[100:130]])
+testlabel=np.append(dataindex[30:50],[dataindex[80:100],dataindex[130:150]])
+traindata_tensor=tf.placeholder('float',[90,4])
+testdata_tensor=tf.placeholder('float',[4])
+distance=tf.reduce_sum(tf.abs(tf.add(traindata_tensor,tf.negative(testdata_tensor))),reduction_indices=1)
+pred = tf.argmin(distance,0)
+test_num=60
+accuracy=0
+init=tf.global_variables_initializer()
+with tf.Session() as sess:
+        sess.run(init)
+        for i in range(test_num):
+            idx=sess.run(pred,feed_dict={traindata_tensor:traindata,testdata_tensor:testdata[i,:]})
+            print('test No.%d,the real label %d, the predict label %d'%(i,testlabel[i],trainlabel[idx]))
+            if testlabel[i]==trainlabel[idx]:
+                accuracy+=1
+                print("result:%f"%(1.0*accuracy/test_num))
